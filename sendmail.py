@@ -5,8 +5,8 @@ from email.mime.multipart import MIMEMultipart
 # Email Configuration - UPDATE THESE WITH YOUR GMAIL CREDENTIALS
 # For Gmail, you need to use an App Password (not your regular password)
 # See instructions in EMAIL_SETUP.md
-GMAIL_SENDER = "darksam9110@gmail.com"  # Your Gmail address
-GMAIL_APP_PASSWORD = "romcemzkntxyvyoa"  # Gmail App Password (16 characters, NO SPACES)
+GMAIL_SENDER = "vishnu192004@gmail.com"  # Your Gmail address
+GMAIL_APP_PASSWORD = "kbkyaqgqpvjytnih"  # Gmail App Password (16 characters, NO SPACES)
 
 def sendmail(toemail, otp):
     """

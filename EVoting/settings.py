@@ -82,8 +82,8 @@ DATABASES = {
         'NAME': 'evoting',
         'HOST': '127.0.0.1',
         'PORT': '3306',
-        'USER': 'root',
-        'PASSWORD': 'Alan12345',
+        'USER': 'evoting',
+        'PASSWORD': '1234',
 	'OPTIONS': {
           'autocommit': True,
         },     
