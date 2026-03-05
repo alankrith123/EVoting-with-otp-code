@@ -29,6 +29,24 @@ DB_CONFIG = {
     'charset': 'utf8'
 }
 
+# ensure the addparty table has an 'active' column to support deactivation/reactivation
+#
+def ensure_active_column():
+    try:
+        conn = pymysql.connect(**DB_CONFIG)
+        cur = conn.cursor()
+        # check if column exists
+        cur.execute("SHOW COLUMNS FROM addparty LIKE 'active'")
+        if cur.rowcount == 0:
+            cur.execute("ALTER TABLE addparty ADD COLUMN active TINYINT(1) DEFAULT 1")
+            conn.commit()
+        conn.close()
+    except Exception as e:
+        print("Warning: could not ensure active column:", e)
+
+# call once at import time
+ensure_active_column()
+
 global username, password, contact, email, address
 
 blockchain = Blockchain()
@@ -185,6 +203,49 @@ def OTPAction(request):
             context= {'data':'Invalid OTP'}
             return render(request, 'OTPValidation.html', context) 
       
+
+def DeactivateParty(request):
+    if request.method == 'GET':
+        cname = request.GET.get('id', False)
+        if cname:
+            conn = pymysql.connect(**DB_CONFIG)
+            cur = conn.cursor()
+            cur.execute("UPDATE addparty SET active=0 WHERE candidatename=%s", (cname,))
+            conn.commit()
+            conn.close()
+        return ViewParty(request)
+
+
+def ReactivateParty(request):
+    if request.method == 'GET':
+        cname = request.GET.get('id', False)
+        if cname:
+            conn = pymysql.connect(**DB_CONFIG)
+            cur = conn.cursor()
+            cur.execute("UPDATE addparty SET active=1 WHERE candidatename=%s", (cname,))
+            conn.commit()
+            conn.close()
+        return ViewParty(request)
+
+
+def DeleteParty(request):
+    if request.method == 'GET':
+        cname = request.GET.get('id', False)
+        if cname:
+            conn = pymysql.connect(**DB_CONFIG)
+            cur = conn.cursor()
+            cur.execute("DELETE FROM addparty WHERE candidatename=%s", (cname,))
+            conn.commit()
+            conn.close()
+            # also remove image files
+            folder = 'EVotingApp/static/parties/'
+            for ext in ['.png', '.jpg', '.jpeg']:
+                path = os.path.join(folder, cname+ext)
+                if os.path.exists(path):
+                    os.remove(path)
+        return ViewParty(request)
+
+
 def FinishVote(request):
     if request.method == 'GET':
         global username
@@ -318,6 +379,25 @@ def getCount(name):
                   print(count)
     return count
 
+#finding party
+def find_party_image(cname, image):
+    """Find the actual image filename by scanning the parties folder"""
+    party_folder = 'EVotingApp/static/parties/'
+    
+    # Images are stored by candidate name - try exact match first, then case-insensitive
+    candidates_to_try = [cname, image, cname.lower(), image.lower()]
+    
+    for candidate in candidates_to_try:
+        
+        files = glob.glob(f"{party_folder}{candidate}.*")
+        if files:
+            filename = os.path.basename(files[0])
+            print(f"DEBUG: Found image {filename} for candidate {cname}")
+            return filename
+    
+    print(f"DEBUG: No image found for candidate {cname} in {party_folder}")
+    return None
+
 def ViewVotes(request):
     if request.method == 'GET':
         output = '<table class="admin-table">'
@@ -329,7 +409,8 @@ def ViewVotes(request):
         con = pymysql.connect(**DB_CONFIG)
         with con:
             cur = con.cursor()
-            cur.execute("select * FROM addparty")
+            # only show active parties during voting
+            cur.execute("select * FROM addparty WHERE active=1")
             rows = cur.fetchall()
             for row in rows:
                 cname = row[0]
@@ -337,14 +418,27 @@ def ViewVotes(request):
                 pname = str(row[1])
                 area = row[2]
                 image = row[3]
-                # Use party name for image filename
-                img_html = '<img src="/static/parties/'+pname+'.png" style="width:150px; height:150px; object-fit:cover; border-radius:8px;" '
-                img_html += 'onerror="this.onerror=null; this.src=\'/static/parties/'+pname+'.jpg\'; this.onerror=function(){this.style.display=\'none\'; this.parentNode.innerHTML=\'No Image\';};">'
+                active_flag = row[4] if len(row) > 4 else 1
+                # Find the actual image file using helper function
+                img_file = find_party_image(cname, image)
+                if img_file:
+                    img_src = '/static/parties/'+img_file
+                else:
+                    img_src = '/static/parties/no-image.png'
+                img_html = '<img src="'+img_src+'" style="width:150px; height:150px; object-fit:cover; border-radius:8px;" '
+                img_html += 'onerror="this.style.display=\'none\'; this.parentNode.innerHTML=\'No Image\';">'
+                status_text = 'Active' if active_flag == 1 else 'Inactive'
+                if active_flag == 1:
+                    action_link = '<a href="DeactivateParty?id='+cname+'" class="btn btn-warning">Deactivate</a>'
+                else:
+                    action_link = '<a href="ReactivateParty?id='+cname+'" class="btn btn-success">Reactivate</a>'
+                action_link += ' <a href="DeleteParty?id='+cname+'" class="btn btn-danger" onclick="return confirm(\'Delete this party?\')">Delete</a>'
                 output+='<tr><td>'+cname+'</td>'
                 output+='<td>'+pname+'</td>'
                 output+='<td>'+area+'</td>'
+                output+='<td>'+status_text+'</td>'
                 output+='<td>'+img_html+'</td>'
-                output+='<td><strong>'+str(count)+'</strong></td></tr>'
+                output+='<td>'+action_link+'</td></tr>'
         output+="</tbody></table>"        
         context= {'data':output}
         return render(request, 'ViewVotes.html', context)    
@@ -355,7 +449,9 @@ def ViewParty(request):
         output+='<thead><tr><th>Candidate Name</th>'
         output+='<th>Party Name</th>'
         output+='<th>Area Name</th>'
-        output+='<th>Image</th></tr></thead><tbody>'
+        output+='<th>Status</th>'
+        output+='<th>Image</th>'
+        output+='<th>Actions</th></tr></thead><tbody>'
         con = pymysql.connect(**DB_CONFIG)
         with con:
             cur = con.cursor()
@@ -366,13 +462,27 @@ def ViewParty(request):
                 pname = str(row[1])
                 area = row[2]
                 image = row[3]
-                # Use party name for image filename
-                img_html = '<img src="/static/parties/'+pname+'.png" style="width:150px; height:150px; object-fit:cover; border-radius:8px;" '
-                img_html += 'onerror="this.onerror=null; this.src=\'/static/parties/'+pname+'.jpg\'; this.onerror=function(){this.style.display=\'none\'; this.parentNode.innerHTML=\'No Image\';};">'
+                # Find the actual image file using helper function
+                img_file = find_party_image(cname, image)
+                if img_file:
+                    img_src = '/static/parties/'+img_file
+                else:
+                    img_src = '/static/parties/no-image.png'
+                img_html = '<img src="'+img_src+'" style="width:150px; height:150px; object-fit:cover; border-radius:8px;" '
+                img_html += 'onerror="this.style.display=\'none\'; this.parentNode.innerHTML=\'No Image\';">'
+                status_text = 'Active' if row[4] == 1 else 'Inactive'
+                # action links
+                if row[4] == 1:
+                    action_link = '<a href="DeactivateParty?id='+cname+'" class="btn btn-warning">Deactivate</a>'
+                else:
+                    action_link = '<a href="ReactivateParty?id='+cname+'" class="btn btn-success">Reactivate</a>'
+                action_link += ' <a href="DeleteParty?id='+cname+'" class="btn btn-danger" onclick="return confirm(\'Delete this party?\')">Delete</a>'
                 output+='<tr><td>'+cname+'</td>'
                 output+='<td>'+pname+'</td>'
                 output+='<td>'+area+'</td>'
-                output+='<td>'+img_html+'</td></tr>'
+                output+='<td>'+status_text+'</td>'
+                output+='<td>'+img_html+'</td>'
+                output+='<td>'+action_link+'</td></tr>'
         output+="</tbody></table>"        
         context= {'data':output}
         return render(request, 'ViewParty.html', context)    
@@ -389,7 +499,7 @@ def AddPartyAction(request):
       
       db_connection = pymysql.connect(**DB_CONFIG)
       db_cursor = db_connection.cursor()
-      student_sql_query = "INSERT INTO addparty(candidatename,partyname,areaname,image) VALUES('"+cname+"','"+pname+"','"+area+"','"+cname+"')"
+      student_sql_query = "INSERT INTO addparty(candidatename,partyname,areaname,image,active) VALUES('"+cname+"','"+pname+"','"+area+"','"+cname+"',1)"
       db_cursor.execute(student_sql_query)
       db_connection.commit()
       print(db_cursor.rowcount, "Record Inserted")
