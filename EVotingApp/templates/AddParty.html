@@ -36,10 +36,13 @@
           </div>
           <div>
             <label for="party">Party name</label>
-            <select id="party" name="t2" required>
-              <option value="Congress">Congress</option>
-              <option value="BJP">BJP</option>
-            </select>
+            <input id="party" type="text" name="t2" placeholder="Select or enter party name" list="party-list" required>
+            <datalist id="party-list">
+              {% for party in parties %}
+              <option value="{{ party }}"></option>
+              {% endfor %}
+            </datalist>
+            <div class="helper">Select from list or type a new party name</div>
           </div>
           <div>
             <label for="area">Area name</label>

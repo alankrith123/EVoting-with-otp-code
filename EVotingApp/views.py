@@ -5,6 +5,7 @@ import pymysql
 from django.http import HttpResponse
 from django.core.files.storage import FileSystemStorage
 import os
+import glob
 from Blockchain import *
 from Block import *
 from datetime import date
@@ -58,7 +59,18 @@ def generate_otp(length=4):
 
 def AddParty(request):
     if request.method == 'GET':
-       return render(request, 'AddParty.html', {})
+       parties = []
+       try:
+           db_connection = pymysql.connect(**DB_CONFIG)
+           db_cursor = db_connection.cursor()
+           db_cursor.execute("SELECT DISTINCT partyname FROM addparty")
+           rows = db_cursor.fetchall()
+           parties = [row[0] for row in rows]
+           db_connection.close()
+       except:
+           parties = []
+       context = {'parties': parties}
+       return render(request, 'AddParty.html', context)
 
 def index(request):
     if request.method == 'GET':
