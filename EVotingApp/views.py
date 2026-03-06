@@ -418,6 +418,7 @@ def ViewVotes(request):
                 pname = str(row[1])
                 area = row[2]
                 image = row[3]
+                active_flag = row[4] if len(row) > 4 else 1
                 # Find the actual image file using helper function
                 img_file = find_party_image(cname, image)
                 if img_file:
@@ -426,9 +427,16 @@ def ViewVotes(request):
                     img_src = '/static/parties/no-image.png'
                 img_html = '<img src="'+img_src+'" style="width:150px; height:150px; object-fit:cover; border-radius:8px;" '
                 img_html += 'onerror="this.style.display=\'none\'; this.parentNode.innerHTML=\'No Image\';">'
+                status_text = 'Active' if active_flag == 1 else 'Inactive'
+                if active_flag == 1:
+                    action_link = '<a href="DeactivateParty?id='+cname+'" class="btn btn-warning">Deactivate</a>'
+                else:
+                    action_link = '<a href="ReactivateParty?id='+cname+'" class="btn btn-success">Reactivate</a>'
+                action_link += ' <a href="DeleteParty?id='+cname+'" class="btn btn-danger" onclick="return confirm(\'Delete this party?\')">Delete</a>'
                 output+='<tr><td>'+cname+'</td>'
                 output+='<td>'+pname+'</td>'
                 output+='<td>'+area+'</td>'
+                output+='<td>'+status_text+'</td>'
                 output+='<td>'+img_html+'</td>'
                 output+='<td>'+str(count)+'</td></tr>'
         output+="</tbody></table>"        
