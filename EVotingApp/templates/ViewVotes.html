@@ -1,34 +1,63 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <title>Votes Overview • Admin</title>
+  <title>Election Results • Admin • E-Voting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'style.css' %}">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700&display=swap"
+    rel="stylesheet">
 </head>
-<body class="page">
-  <div class="topbar">
+
+<body class="page animate-fade-in">
+  <div class="topbar glass">
     <div class="nav">
-      <div class="brand">E-Voting Admin <span class="pill">Console</span></div>
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" class="text-accent-secondary"
+          style="color:var(--accent-secondary)">
+          <polyline points="9 11 12 14 22 4"></polyline>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        E-Voting <span class="pill"
+          style="background: rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.4); color: var(--accent-secondary);">Admin</span>
+      </div>
       <div class="nav-links">
-        <a href="{% url 'AddParty' %}">Add Party</a>
-        <a href="{% url 'ViewParty' %}">View Parties</a>
-        <a class="active" href="{% url 'ViewVotes' %}">View Votes</a>
-        <a href="{% url 'index' %}">Logout</a>
+        <a href="{% url 'AddParty' %}">Add Candidate</a>
+        <a href="{% url 'ViewParty' %}">View Roster</a>
+        <a class="active" href="{% url 'ViewVotes' %}"
+          style="box-shadow: inset 0 0 0 1px var(--accent-secondary);">Election Results</a>
+        <a href="{% url 'index' %}" style="color: var(--danger);">Logout</a>
       </div>
     </div>
   </div>
 
   <div class="shell">
-    <div class="hero">
-      <h1>Votes overview</h1>
-      <p>Live tally and verification powered by blockchain-backed records.</p>
+    <div class="glass-card"
+      style="padding: 40px; margin-bottom: 24px; border-color: rgba(139, 92, 246, 0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 style="font-size: 2rem; margin-bottom: 8px;">Live Election Tally</h1>
+        <p class="muted" style="margin: 0;">Monitor real-time vote counts secured by the cryptographic ledger.</p>
+      </div>
+      <div>
+        <div
+          style="padding: 12px 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: var(--radius-sm); color: var(--success); font-weight: 600; font-family: monospace; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+          <span
+            style="display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite;"></span>
+          SYSTEM ACTIVE
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <div>{{ data|safe }}</div>
+
+    <div class="glass-card table-container" style="padding: 24px;">
+      {{ data|safe }}
     </div>
   </div>
 
-  <div class="footer">E-Voting • Privacy and Transparency</div>
+  <div class="footer">E-Voting System &bull; Secured by Blockchain</div>
 </body>
+
 </html>

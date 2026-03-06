@@ -1,64 +1,95 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <title>Add Party • Admin</title>
+  <title>Add Party • Admin • E-Voting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'style.css' %}">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700&display=swap"
+    rel="stylesheet">
 </head>
-<body class="page">
-  <div class="topbar">
+
+<body class="page animate-fade-in">
+  <div class="topbar glass">
     <div class="nav">
-      <div class="brand">E-Voting <span class="pill">Admin</span></div>
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" class="text-accent-secondary"
+          style="color:var(--accent-secondary)">
+          <polyline points="9 11 12 14 22 4"></polyline>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        E-Voting <span class="pill"
+          style="background: rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.4); color: var(--accent-secondary);">Admin</span>
+      </div>
       <div class="nav-links">
-        <a class="active" href="{% url 'AddParty' %}">Add Party</a>
-        <a href="{% url 'ViewParty' %}">View Parties</a>
-        <a href="{% url 'ViewVotes' %}">View Votes</a>
-        <a href="{% url 'index' %}">Logout</a>
+        <a class="active" href="{% url 'AddParty' %}" style="box-shadow: inset 0 0 0 1px var(--accent-secondary);">Add
+          Candidate</a>
+        <a href="{% url 'ViewParty' %}">View Roster</a>
+        <a href="{% url 'ViewVotes' %}">Election Results</a>
+        <a href="{% url 'index' %}" style="color: var(--danger);">Logout</a>
       </div>
     </div>
   </div>
 
   <div class="shell">
-    <div class="hero">
-      <h1>Add a new party candidate</h1>
-      <p>Provide candidate, party, area, and a profile image to publish to voters.</p>
+    <div class="glass-card" style="padding: 40px; margin-bottom: 24px; border-color: rgba(139, 92, 246, 0.3);">
+      <h1 style="font-size: 2rem; margin-bottom: 8px;">Register New Candidate</h1>
+      <p class="muted">Add a new candidate/party to the blockchain election ledger.</p>
     </div>
 
-    <div class="card">
+    <div class="glass-card" style="padding: 40px;">
       <form name="f1" method="post" action={% url 'AddPartyAction' %} enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="helper">{{ data }}</div>
-        <div class="grid-2">
-          <div>
-            <label for="candidate">Candidate name</label>
-            <input id="candidate" type="text" name="t1" required>
-          </div>
-          <div>
-            <label for="party">Party name</label>
-            <select id="party" name="t2" required>
-              <option value="Congress">Congress</option>
-              <option value="BJP">BJP</option>
-            </select>
-          </div>
-          <div>
-            <label for="area">Area name</label>
-            <input id="area" type="text" name="t3" required>
-          </div>
-          <div>
-            <label for="image">Profile image</label>
-            <input id="image" type="file" name="t4" accept="image/*" required>
-            <div class="helper">JPG/PNG recommended</div>
-          </div>
+
+        {% if data %}
+        <div
+          style="margin-bottom: 24px; padding: 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: var(--radius-sm); color: var(--success); font-weight: 500;">
+          {{ data }}
         </div>
-        <div class="actions">
-          <button type="submit" class="btn btn-primary">Add party</button>
-          <a class="btn btn-secondary" href="{% url 'ViewParty' %}">View parties</a>
+        {% endif %}
+
+        <div class="stack">
+          <div class="grid-2">
+            <div>
+              <label for="candidate">Candidate Full Name</label>
+              <input id="candidate" type="text" name="t1" required placeholder="e.g. Jane Doe">
+            </div>
+            <div>
+              <label for="party">Party Affiliation</label>
+              <select id="party" name="t2" required>
+                <option value="" disabled selected>Select a party...</option>
+                <option value="Congress">Congress</option>
+                <option value="BJP">BJP</option>
+              </select>
+            </div>
+            <div>
+              <label for="area">Constituency / Area</label>
+              <input id="area" type="text" name="t3" required placeholder="e.g. District 9">
+            </div>
+            <div>
+              <label for="image">Candidate Portrait</label>
+              <input id="image" type="file" name="t4" accept="image/*" required>
+              <div class="helper" style="margin-top: 6px; font-size: 0.8rem; color: var(--accent-secondary);">Provide a
+                clear, front-facing photo (JPG/PNG)</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 16px; margin-top: 24px;">
+            <button type="submit" class="btn btn-primary"
+              style="background: linear-gradient(135deg, var(--accent-secondary), #EC4899); box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);">Register
+              Candidate</button>
+            <a class="btn btn-secondary" href="{% url 'ViewParty' %}">Cancel</a>
+          </div>
         </div>
       </form>
     </div>
   </div>
 
-  <div class="footer">E-Voting • Privacy and Transparency</div>
+  <div class="footer">E-Voting System &bull; Secured by Blockchain</div>
 </body>
+
 </html>

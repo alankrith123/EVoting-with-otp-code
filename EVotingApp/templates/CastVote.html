@@ -5,13 +5,20 @@
 <head>
 	<meta charset="utf-8">
 	<title>Cast Vote • Face Capture</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="{% static 'style.css' %}">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700&display=swap"
+		rel="stylesheet">
 	<script type="text/javascript" src="{% static 'webcam.min.js' %}"></script>
 	<script>
 		function take_snapshot() {
 			Webcam.snap(function (data_uri) {
 				document.getElementById('results').innerHTML =
-					'<div class="card"><h3>Captured image</h3><img src="' + data_uri + '" style="max-width:100%; border-radius:12px;"/></div>';
+					'<div style="text-align:center;">' +
+					'<h3 style="font-size:1.1rem; margin-bottom:12px;">Captured Scan</h3>' +
+					'<img src="' + data_uri + '" style="max-width:100%; border-radius:12px; border:2px solid var(--accent-primary); box-shadow:0 0 20px rgba(14, 165, 233, 0.4);"/>' +
+					'</div>';
 				const request = new XMLHttpRequest();
 				request.open("GET", "http://127.0.0.1:8000/WebCam?mytext=" + data_uri);
 				request.onreadystatechange = function () {
@@ -24,11 +31,24 @@
 		}
 
 		function showToast(message, type = "error") {
-			const toast = document.getElementById('toast');
-			toast.textContent = message;
-			toast.className = "toast toast-" + type + " show";
+			const toast = document.getElementById("toast");
+			const icon = document.getElementById("toast-icon");
+			const msg = document.getElementById("toast-msg");
+
+			msg.textContent = message;
+
+			if (type === "error") {
+				toast.className = "toast toast-error show";
+				icon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+				icon.style.color = "var(--danger)";
+			} else if (type === "success") {
+				toast.className = "toast toast-success show";
+				icon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+				icon.style.color = "var(--success)";
+			}
+
 			setTimeout(() => {
-				toast.className = "toast";
+				toast.classList.remove("show");
 			}, 4000);
 		}
 
@@ -49,54 +69,104 @@
 	</script>
 </head>
 
-<body class="page">
-	<div class="topbar">
+<body class="page animate-fade-in">
+	<div class="topbar glass">
 		<div class="nav">
-			<div class="brand">E-Voting <span class="pill">Secure</span></div>
+			<div class="brand">
+				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+					stroke-linecap="round" stroke-linejoin="round" class="text-accent-primary"
+					style="color:var(--accent-primary)">
+					<polyline points="9 11 12 14 22 4"></polyline>
+					<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+				</svg>
+				E-Voting <span class="pill">Secure</span>
+			</div>
 			<div class="nav-links">
-				<a class="active" href="{% url 'CastVote' %}">Capture & Validate</a>
-				<a href="{% url 'index' %}">Logout</a>
+				<a class="active" href="{% url 'CastVote' %}"
+					style="box-shadow: inset 0 0 0 1px var(--accent-primary);">Capture & Validate</a>
+				<a href="{% url 'index' %}" style="color: var(--danger);">Logout</a>
 			</div>
 		</div>
 	</div>
 
 	<div class="shell">
-		<div class="hero">
-			<h1>Capture your face to proceed</h1>
-			<p>This step confirms your identity before voting. Images are handled securely.</p>
+		<div class="glass-card"
+			style="padding: 40px; margin-bottom: 24px; border-color: rgba(14, 165, 233, 0.3); text-align: center;">
+			<h1 style="font-size: 2rem; margin-bottom: 8px;">Biometric Verification</h1>
+			<p class="muted">Capture your face to verify your cryptographic identity. This step is required before
+				accessing the ballot.</p>
 		</div>
 
 		<div class="grid-2">
-			<div class="card">
-				<h3>Camera</h3>
-				<div id="my_camera"></div>
-				<div class="actions">
-					<button type="button" class="btn btn-primary" onclick="take_snapshot()">Take snapshot</button>
+			<div class="glass-card"
+				style="padding: 32px; display: flex; flex-direction: column; align-items: center; gap: 24px;">
+				<h3 style="margin: 0; font-size: 1.25rem;">Live Camera</h3>
+
+				<div class="camera-container" style="box-shadow: 0 0 30px rgba(14, 165, 233, 0.2);">
+					<div id="my_camera"></div>
+					<div class="scanner-overlay"></div>
+				</div>
+
+				<div>
+					<button type="button" class="btn btn-secondary" onclick="take_snapshot()">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+							<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+							</path>
+							<circle cx="12" cy="13" r="4"></circle>
+						</svg>
+						Take Snapshot
+					</button>
 				</div>
 			</div>
 
-			<div id="results" class="card">
-				<h3>Preview</h3>
-				<div class="muted">Your captured image will appear here.</div>
+			<div class="glass-card"
+				style="padding: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 350px;">
+				<div id="results" style="width: 100%;">
+					<div style="text-align: center; color: var(--text-muted);">
+						<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+							style="opacity: 0.5; margin-bottom: 16px;">
+							<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+							<circle cx="8.5" cy="8.5" r="1.5"></circle>
+							<polyline points="21 15 16 10 5 21"></polyline>
+						</svg>
+						<p style="margin:0;">Your captured biometric scan will appear here.</p>
+					</div>
+				</div>
 			</div>
 		</div>
 
-		<div class="card">
-			<div id="sr" class="status muted">Server response will appear here after capture.</div>
+		<div class="glass-card" style="padding: 32px; text-align: center; margin-top: 16px;">
+			<div id="sr" class="muted" style="margin-bottom: 24px; font-weight: 500;">Awaiting server validation...
+			</div>
+
 			<form name="f1" method="post" action="{% url 'ValidateUser' %}">
 				{% csrf_token %}
-				<div class="actions">
-					<button type="submit" class="btn btn-primary">Validate & continue</button>
-					<a href="{% url 'index' %}" class="btn btn-secondary">Back to home</a>
+				<div style="display: flex; gap: 16px; justify-content: center;">
+					<button type="submit" class="btn btn-primary" style="padding: 12px 32px; border-radius: 999px;">
+						Validate Identity & Continue
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px;">
+							<polyline points="9 18 15 12 9 6"></polyline>
+						</svg>
+					</button>
+					<a href="{% url 'index' %}" class="btn btn-secondary" style="border-radius: 999px;">Cancel</a>
 				</div>
 			</form>
 		</div>
 	</div>
 
-	<div class="footer">E-Voting • Privacy and Transparency</div>
+	<div class="footer">E-Voting System &bull; Secured by Blockchain</div>
 
 	<!-- Toast Notification -->
-	<div id="toast" class="toast"></div>
+	<div class="toast-container">
+		<div id="toast" class="toast">
+			<svg id="toast-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+				stroke-width="2"></svg>
+			<span id="toast-msg"></span>
+		</div>
+	</div>
 </body>
 
 </html>
