@@ -3,47 +3,79 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>E-Voting</title>
+  <title>E-Voting | Next Gen Democracy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'style.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body class="page">
-  <div class="topbar">
+<body class="page animate-fade-in">
+  <!-- Glowing orbs are handled by body background gradient in CSS -->
+  
+  <div class="topbar glass">
     <div class="nav">
-      <div class="brand">E-Voting <span class="pill">Secure</span></div>
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent-primary" style="color:var(--accent-primary)"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        E-Voting <span class="pill">Secure</span>
+      </div>
       <div class="nav-links">
         <a class="active" href="{% url 'index' %}">Home</a>
-        <a href="{% url 'Admin' %}">Admin Login</a>
-        <a href="{% url 'Login' %}">User Login</a>
+        <a href="{% url 'Admin' %}">Admin</a>
+        <a href="{% url 'Login' %}">Voter Login</a>
         <a href="{% url 'Register' %}">Register</a>
       </div>
     </div>
   </div>
 
   <div class="shell">
-    <div class="hero">
-      <h1>Blockchain E‑Voting, private and transparent</h1>
-      <p>Cast and verify votes with confidence. Secured by blockchain, designed for clarity.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="{% url 'Login' %}">Login to vote</a>
-        <a class="btn btn-secondary" href="{% url 'Register' %}">Create account</a>
+    <div class="glass-card" style="padding: 64px 32px; text-align: center; margin-bottom: 24px; position: relative; overflow: hidden;">
+      <div style="position: relative; z-index: 2;">
+        <h1 style="font-size: 3.5rem; line-height: 1.1; margin-bottom: 24px;">
+          Next-Generation <br />
+          <span class="text-gradient">Blockchain E-Voting</span>
+        </h1>
+        <p class="muted" style="font-size: 1.25rem; max-width: 600px; margin: 0 auto 32px;">
+          Cast your vote with unparalleled security and cryptographic transparency. Our biometric scanning and blockchain ledger ensure your voice is immutable.
+        </p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a class="btn btn-primary" href="{% url 'Login' %}" style="font-size: 1.1rem; padding: 16px 32px; border-radius: 999px;">
+            Cast Your Vote
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px;"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+          </a>
+          <a class="btn btn-secondary" href="{% url 'Register' %}" style="font-size: 1.1rem; padding: 16px 32px; border-radius: 999px;">
+            Become a Voter
+          </a>
+        </div>
       </div>
+      <!-- Decorative background blur -->
+      <div style="position: absolute; top: -50%; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 60%); pointer-events: none; z-index: 1;"></div>
     </div>
 
-    <div class="card">
-      <h3>How it works</h3>
-      <div class="grid-2">
-        <div>
-          <p><strong>Register & verify</strong></p>
-          <p class="muted">Secure signup with face capture and OTP to ensure eligibility.</p>
+    <div style="text-align: center; margin-bottom: 32px;">
+      <h2 style="font-size: 2rem;">How the System Works</h2>
+      <p class="muted">A trustless voting process secured at multiple layers.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="glass-card" style="padding: 32px;">
+        <div style="width: 48px; height: 48px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(139, 92, 246, 0.2);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h18M3 10h18" /><path d="M3 6h18v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6z" /></svg>
         </div>
-        <div>
-          <p><strong>Transparent casting</strong></p>
-          <p class="muted">Every vote is recorded immutably. Results are auditable without exposing identities.</p>
+        <h3 style="font-size: 1.25rem;">Biometric & OTP Verification</h3>
+        <p class="muted" style="margin: 0; font-size: 0.95rem;">Voter identity is guaranteed through real-time facial recognition and dual-factor OTP authentication, eliminating impersonation.</p>
+      </div>
+      
+      <div class="glass-card" style="padding: 32px;">
+        <div style="width: 48px; height: 48px; background: rgba(14, 165, 233, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(14, 165, 233, 0.2);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
         </div>
+        <h3 style="font-size: 1.25rem;">Immutable Blockchain Ledger</h3>
+        <p class="muted" style="margin: 0; font-size: 0.95rem;">Every ballot is cryptographically hashed and chained to form a tamper-proof record of the election, guaranteeing 100% integrity.</p>
       </div>
     </div>
   </div>
 
-  <div class="footer">E-Voting • Privacy and Transparency</div>
+  <div class="footer">
+    <p style="margin: 0;">E-Voting System &bull; Secured by Blockchain &bull; Transparency and Anonymity</p>
+  </div>
 </body>
 </html>
