@@ -1,34 +1,66 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <title>Party Directory • Admin</title>
+  <title>Party Roster • Admin • E-Voting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'style.css' %}">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700&display=swap"
+    rel="stylesheet">
 </head>
-<body class="page">
-  <div class="topbar">
+
+<body class="page animate-fade-in">
+  <div class="topbar glass">
     <div class="nav">
-      <div class="brand">E-Voting Admin <span class="pill">Console</span></div>
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" class="text-accent-secondary"
+          style="color:var(--accent-secondary)">
+          <polyline points="9 11 12 14 22 4"></polyline>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        E-Voting <span class="pill"
+          style="background: rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.4); color: var(--accent-secondary);">Admin</span>
+      </div>
       <div class="nav-links">
-        <a href="{% url 'AddParty' %}">Add Party</a>
-        <a class="active" href="{% url 'ViewParty' %}">View Parties</a>
-        <a href="{% url 'ViewVotes' %}">View Votes</a>
-        <a href="{% url 'index' %}">Logout</a>
+        <a href="{% url 'AddParty' %}">Add Candidate</a>
+        <a class="active" href="{% url 'ViewParty' %}" style="box-shadow: inset 0 0 0 1px var(--accent-secondary);">View
+          Roster</a>
+        <a href="{% url 'ViewVotes' %}">Election Results</a>
+        <a href="{% url 'index' %}" style="color: var(--danger);">Logout</a>
       </div>
     </div>
   </div>
 
   <div class="shell">
-    <div class="hero">
-      <h1>Party Directory</h1>
-      <p>Review registered parties and their metadata.</p>
+    <div class="glass-card"
+      style="padding: 40px; margin-bottom: 24px; border-color: rgba(139, 92, 246, 0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1 style="font-size: 2rem; margin-bottom: 8px;">Candidate Roster</h1>
+        <p class="muted" style="margin: 0;">Review all registered candidates currently active on the ledger.</p>
+      </div>
+      <div>
+        <a href="{% url 'AddParty' %}" class="btn btn-primary"
+          style="background: linear-gradient(135deg, var(--accent-secondary), #EC4899); box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Register Candidate
+        </a>
+      </div>
     </div>
-    <div class="card">
+
+    <div class="glass-card table-container" style="padding: 24px;">
       {{ data|safe }}
     </div>
   </div>
 
-  <div class="footer">E-Voting • Privacy and Transparency</div>
+  <div class="footer">E-Voting System &bull; Secured by Blockchain</div>
 </body>
+
 </html>

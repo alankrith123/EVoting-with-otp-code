@@ -146,7 +146,7 @@ def getOutput(status):
     output += '<div><h3 style="margin: 0 0 8px 0; color: #1f2937;">'+status+'</h3><p style="margin: 0; color: #6b7280;">Your registered identity has been verified. Please select your candidate below.</p></div></div>'
     
     # Modern table for candidates
-    output += '<table class="admin-table">'
+    output += '<table class="table">'
     output+='<thead><tr><th>Candidate Name</th>'
     output+='<th>Party Name</th>'
     output+='<th>Area Name</th>'
@@ -400,7 +400,7 @@ def find_party_image(cname, image):
 
 def ViewVotes(request):
     if request.method == 'GET':
-        output = '<table class="admin-table">'
+        output = '<table class="table">'
         output+='<thead><tr><th>Candidate Name</th>'
         output+='<th>Party Name</th>'
         output+='<th>Area Name</th>'
@@ -437,7 +437,7 @@ def ViewVotes(request):
             
 def ViewParty(request):
     if request.method == 'GET':
-        output = '<table class="admin-table">'
+        output = '<table class="table">'
         output+='<thead><tr><th>Candidate Name</th>'
         output+='<th>Party Name</th>'
         output+='<th>Area Name</th>'
