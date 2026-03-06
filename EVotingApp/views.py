@@ -47,7 +47,7 @@ def ensure_active_column():
 # call once at import time
 ensure_active_column()
 
-global username, password, contact, email, address, aadhar
+global username, password, contact, email, address
 
 blockchain = Blockchain()
 if os.path.exists('blockchain_contract.txt'):
@@ -438,7 +438,7 @@ def ViewVotes(request):
                 output+='<td>'+area+'</td>'
                 output+='<td>'+status_text+'</td>'
                 output+='<td>'+img_html+'</td>'
-                output+='<td>'+str(count)+'</td></tr>'
+                output+='<td>'+action_link+'</td></tr>'
         output+="</tbody></table>"        
         context= {'data':output}
         return render(request, 'ViewVotes.html', context)    
@@ -512,7 +512,7 @@ def AddPartyAction(request):
 
 def saveSignup(request):
     if request.method == 'POST':
-        global username, password, contact, email, address, aadhar
+        global username, password, contact, email, address
         img = cv2.imread('EVotingApp/static/photo/test.png')
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         face_component = None
@@ -523,7 +523,7 @@ def saveSignup(request):
             cv2.imwrite('EVotingApp/static/profiles/'+username+'.png',face_component)
             db_connection = pymysql.connect(**DB_CONFIG)
             db_cursor = db_connection.cursor()
-            student_sql_query = "INSERT INTO register(username,password,contact,aadhar,email,address) VALUES('"+username+"','"+password+"','"+contact+"','"+aadhar+"','"+email+"','"+address+"')"
+            student_sql_query = "INSERT INTO register(username,password,contact,email,address) VALUES('"+username+"','"+password+"','"+contact+"','"+email+"','"+address+"')"
             db_cursor.execute(student_sql_query)
             db_connection.commit()
             print(db_cursor.rowcount, "Record Inserted")
@@ -540,22 +540,21 @@ def saveSignup(request):
 
 def Signup(request):
     if request.method == 'POST':
-      global username, password, contact, email, address, aadhar
+      global username, password, contact, email, address
       username = request.POST.get('username', False)
       password = request.POST.get('password', False)
       contact = request.POST.get('contact', False)
-      aadhar = request.POST.get('aadhar', False)
       email = request.POST.get('email', False)
       address = request.POST.get('address', False)
       
-      # Check if aadhar already exists
+      # Check if username already exists
       try:
           con = pymysql.connect(**DB_CONFIG)
           with con:
               cur = con.cursor()
-              cur.execute("SELECT aadhar FROM register WHERE aadhar = %s", (aadhar,))
+              cur.execute("SELECT username FROM register WHERE username = %s", (username,))
               if cur.fetchone():
-                  context = {'data': 'Aadhar number already registered. Please use a different one.'}
+                  context = {'data': 'Username already exists. Please choose another.'}
                   return render(request, 'Register.html', context)
       except Exception as e:
           print(f"Database error during signup: {e}")
