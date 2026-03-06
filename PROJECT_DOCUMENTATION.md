@@ -39,8 +39,8 @@
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              APPLICATION LAYER (Django Views)                │
-│  ┌──────────────────────────────────────────────────────┐  │
+│              APPLICATION LAYER (Django Views)               │
+│  ┌──────────────────────────────────────────────────────┐   │
 │  │  Authentication Module  │  Voting Module             │  │
 │  │  - Face Recognition     │  - OTP Generation         │  │
 │  │  - User Validation      │  - Blockchain Mining      │  │

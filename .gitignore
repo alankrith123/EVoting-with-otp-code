@@ -155,3 +155,5 @@ yarn-error.log*
 *.exe
 *.out
 *.app
+
+PROJECT_FILE_DOCUMENTATION.TXT

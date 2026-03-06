@@ -2,7 +2,8 @@
 SQLyog Community Edition- MySQL GUI v7.15 
 MySQL - 5.5.29 : Database - evoting
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -238,9 +239,11 @@ CREATE TABLE `register` (
   `username` varchar(30) NOT NULL,
   `password` varchar(30) DEFAULT NULL,
   `contact` varchar(12) DEFAULT NULL,
+  `aadhar` varchar(12) DEFAULT NULL,
   `email` varchar(30) DEFAULT NULL,
   `address` varchar(40) DEFAULT NULL,
-  PRIMARY KEY (`username`)
+  PRIMARY KEY (`username`),
+  UNIQUE KEY `aadhar` (`aadhar`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `register` */
