@@ -54,8 +54,7 @@ CREATE TABLE register(
     username varchar(30) PRIMARY KEY,
     password varchar(30),
     contact varchar(12),
-    aadhar varchar(12) UNIQUE,
-    email_new varchar(30),
+    email varchar(30),
     address varchar(40)
 );
 ```
@@ -118,11 +117,11 @@ You should see:
 
 ### Add sample users:
 ```sql
-INSERT INTO register(username, password, contact, aadhar, email_new, address) 
-VALUES ('ram', 'ram', '7702177291', '123456789012', 'ram@gmail.com', 'hyd');
+INSERT INTO register(username, password, contact, email, address) 
+VALUES ('ram', 'ram', '7702177291', 'ram@gmail.com', 'hyd');
 
-INSERT INTO register(username, password, contact, aadhar, email_new, address) 
-VALUES ('shanthan', 'shan', '7702177291', '123456789013', 'shan@gmail.com', 'hydreabad');
+INSERT INTO register(username, password, contact, email, address) 
+VALUES ('shanthan', 'shan', '7702177291', 'shan@gmail.com', 'hydreabad');
 ```
 
 ### Add sample candidates:

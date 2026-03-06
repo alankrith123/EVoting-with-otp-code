@@ -73,11 +73,15 @@
 									secondary verification</div>
 							</div>
 							<div>
-								<label for="email">Email address</label>
-								<input id="email" type="email" name="email" placeholder="your.name@domain.com" required>
-								<div class="helper"
-									style="margin-top: 6px; font-size: 0.8rem; color: var(--accent-primary);">Will
-									receive secure OTP confirmations</div>
+								<label for="aadhar">Aadhar Number</label>
+								<input id="aadhar" type="text" name="aadhar" inputmode="numeric"
+									placeholder="Your 12-digit Aadhar number" required maxlength="12" pattern="\d{12}">
+								<div class="helper">12 digits only</div>
+							</div>
+							<div>
+								<label for="email">Email</label>
+								<input id="email" type="email" name="email" placeholder="your@email.com" required>
+								<div class="helper">For OTP verification</div>
 							</div>
 						</div>
 

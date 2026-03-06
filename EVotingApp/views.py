@@ -47,7 +47,7 @@ def ensure_active_column():
 # call once at import time
 ensure_active_column()
 
-global username, password, contact, email, address, aadhar
+global username, password, contact, email, address
 
 blockchain = Blockchain()
 if os.path.exists('blockchain_contract.txt'):
@@ -418,6 +418,7 @@ def ViewVotes(request):
                 pname = str(row[1])
                 area = row[2]
                 image = row[3]
+                active_flag = row[4] if len(row) > 4 else 1
                 # Find the actual image file using helper function
                 img_file = find_party_image(cname, image)
                 if img_file:
@@ -426,11 +427,18 @@ def ViewVotes(request):
                     img_src = '/static/parties/no-image.png'
                 img_html = '<img src="'+img_src+'" style="width:150px; height:150px; object-fit:cover; border-radius:8px;" '
                 img_html += 'onerror="this.style.display=\'none\'; this.parentNode.innerHTML=\'No Image\';">'
+                status_text = 'Active' if active_flag == 1 else 'Inactive'
+                if active_flag == 1:
+                    action_link = '<a href="DeactivateParty?id='+cname+'" class="btn btn-warning">Deactivate</a>'
+                else:
+                    action_link = '<a href="ReactivateParty?id='+cname+'" class="btn btn-success">Reactivate</a>'
+                action_link += ' <a href="DeleteParty?id='+cname+'" class="btn btn-danger" onclick="return confirm(\'Delete this party?\')">Delete</a>'
                 output+='<tr><td>'+cname+'</td>'
                 output+='<td>'+pname+'</td>'
                 output+='<td>'+area+'</td>'
+                output+='<td>'+status_text+'</td>'
                 output+='<td>'+img_html+'</td>'
-                output+='<td>'+str(count)+'</td></tr>'
+                output+='<td>'+action_link+'</td></tr>'
         output+="</tbody></table>"        
         context= {'data':output}
         return render(request, 'ViewVotes.html', context)    
@@ -504,7 +512,7 @@ def AddPartyAction(request):
 
 def saveSignup(request):
     if request.method == 'POST':
-        global username, password, contact, email, address, aadhar
+        global username, password, contact, email, address
         img = cv2.imread('EVotingApp/static/photo/test.png')
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         face_component = None
@@ -515,7 +523,7 @@ def saveSignup(request):
             cv2.imwrite('EVotingApp/static/profiles/'+username+'.png',face_component)
             db_connection = pymysql.connect(**DB_CONFIG)
             db_cursor = db_connection.cursor()
-            student_sql_query = "INSERT INTO register(username,password,contact,aadhar,email,address) VALUES('"+username+"','"+password+"','"+contact+"','"+aadhar+"','"+email+"','"+address+"')"
+            student_sql_query = "INSERT INTO register(username,password,contact,email,address) VALUES('"+username+"','"+password+"','"+contact+"','"+email+"','"+address+"')"
             db_cursor.execute(student_sql_query)
             db_connection.commit()
             print(db_cursor.rowcount, "Record Inserted")
@@ -532,22 +540,21 @@ def saveSignup(request):
 
 def Signup(request):
     if request.method == 'POST':
-      global username, password, contact, email, address, aadhar
+      global username, password, contact, email, address
       username = request.POST.get('username', False)
       password = request.POST.get('password', False)
       contact = request.POST.get('contact', False)
-      aadhar = request.POST.get('aadhar', False)
       email = request.POST.get('email', False)
       address = request.POST.get('address', False)
       
-      # Check if aadhar already exists
+      # Check if username already exists
       try:
           con = pymysql.connect(**DB_CONFIG)
           with con:
               cur = con.cursor()
-              cur.execute("SELECT aadhar FROM register WHERE aadhar = %s", (aadhar,))
+              cur.execute("SELECT username FROM register WHERE username = %s", (username,))
               if cur.fetchone():
-                  context = {'data': 'Aadhar number already registered. Please use a different one.'}
+                  context = {'data': 'Username already exists. Please choose another.'}
                   return render(request, 'Register.html', context)
       except Exception as e:
           print(f"Database error during signup: {e}")
